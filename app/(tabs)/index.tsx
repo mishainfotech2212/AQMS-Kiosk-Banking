@@ -1,11 +1,11 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, Pressable, StyleSheet } from 'react-native';
 
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 
 export default function HomeScreen() {
   return (
@@ -20,6 +20,15 @@ export default function HomeScreen() {
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
+      </ThemedView>
+      <ThemedView style={styles.stepContainer}>
+        <Pressable
+          style={styles.kioskCta}
+          onPress={() => router.push('/kiosk')}
+          accessibilityRole="button">
+          <ThemedText type="subtitle">Banking Kiosk</ThemedText>
+          <ThemedText>Open the full kiosk flow (7 steps + confirmation).</ThemedText>
+        </Pressable>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
@@ -83,6 +92,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+  },
+  kioskCta: {
+    padding: 14,
+    borderRadius: 12,
+    backgroundColor: 'rgba(10, 126, 164, 0.12)',
+    gap: 6,
   },
   stepContainer: {
     gap: 8,

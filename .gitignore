@@ -30,7 +30,8 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
+# local env files (never commit secrets)
+.env
 .env*.local
 
 # typescript
@@ -41,3 +42,6 @@ app-example
 # generated native folders
 /ios
 /android
+
+# accidental local Gradle download cache (not project wrapper)
+/wrapper
