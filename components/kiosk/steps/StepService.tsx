@@ -75,9 +75,6 @@ function TreeRows({
               )}
               <View style={styles.nodeBody}>
                 <Text style={styles.nodeName}>{node.name}</Text>
-                {node.estimated_wait_minutes != null && node.estimated_wait_minutes > 0 ? (
-                  <Text style={styles.waitHint}>~{node.estimated_wait_minutes} min</Text>
-                ) : null}
               </View>
             </Pressable>
             {hasChildren && isOpen ? (
@@ -281,10 +278,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: KioskColors.navy,
-  },
-  waitHint: {
-    fontSize: 12,
-    color: KioskColors.greyMuted,
   },
   empty: {
     padding: 20,

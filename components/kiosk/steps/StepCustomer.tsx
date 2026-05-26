@@ -25,7 +25,6 @@ export function StepCustomer() {
     branchLabel,
     serviceName,
     serviceItemId,
-    estimatedServiceTime,
     customerName,
     setCustomerName,
     customerPhone,
@@ -87,16 +86,6 @@ export function StepCustomer() {
           <View style={styles.infoTextWrap}>
             <Text style={styles.infoLabel}>Selected Service</Text>
             <Text style={styles.infoValue}>{serviceName ?? '—'}</Text>
-          </View>
-        </View>
-
-        <View style={[styles.infoRow, styles.timeRow]}>
-          <View style={styles.infoIcon}>
-            <Ionicons name="time-outline" size={22} color={KioskColors.mediumBlue} />
-          </View>
-          <View style={styles.infoTextWrap}>
-            <Text style={styles.timeLabel}>Estimated Service Time</Text>
-            <Text style={styles.timeValue}>{estimatedServiceTime}</Text>
           </View>
         </View>
       </View>
@@ -170,9 +159,6 @@ const styles = StyleSheet.create({
     padding: 14,
     gap: 12,
   },
-  timeRow: {
-    backgroundColor: KioskColors.lightBlueBg,
-  },
   infoIcon: {
     width: 44,
     height: 44,
@@ -193,16 +179,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '700',
     color: KioskColors.navy,
-  },
-  timeLabel: {
-    fontSize: 13,
-    color: KioskColors.mediumBlue,
-    marginBottom: 4,
-  },
-  timeValue: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: KioskColors.mediumBlue,
   },
   fieldLabel: {
     fontSize: 15,

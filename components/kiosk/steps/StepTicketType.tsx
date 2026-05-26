@@ -25,13 +25,10 @@ export function StepTicketType() {
             { opacity: pressed ? 0.95 : 1 },
           ]}>
           <View style={styles.iconRing}>
-            <Ionicons name="time-outline" size={28} color={KioskColors.greyMuted} />
+            <Ionicons name="list-outline" size={28} color={KioskColors.greyMuted} />
           </View>
           <Text style={styles.cardTitle}>Standard</Text>
-          <Text style={styles.cardDesc}>Regular queue with standard waiting time</Text>
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>~15-20 Minutes</Text>
-          </View>
+          <Text style={styles.cardDesc}>Regular queue for standard service</Text>
         </Pressable>
 
         <Pressable
@@ -46,9 +43,9 @@ export function StepTicketType() {
           </View>
           <Text style={styles.cardTitle}>Priority</Text>
           <Text style={styles.cardDesc}>Faster service with priority access</Text>
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>~5-10 Minutes</Text>
-          </View>
+          <Text style={styles.priorityHelp}>
+            For pregnant women, VIP customers, people with disabilities, and senior citizens
+          </Text>
         </Pressable>
       </View>
 
@@ -128,17 +125,13 @@ const styles = StyleSheet.create({
     color: KioskColors.greyMuted,
     lineHeight: 18,
   },
-  badge: {
-    backgroundColor: KioskColors.cardGrey,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    marginTop: 4,
-  },
-  badgeText: {
+  priorityHelp: {
     fontSize: 12,
     fontWeight: '600',
     color: KioskColors.greyMuted,
+    textAlign: 'center',
+    lineHeight: 17,
+    marginTop: 4,
   },
   footer: {
     flexDirection: 'row',

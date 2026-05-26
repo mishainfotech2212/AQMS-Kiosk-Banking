@@ -18,9 +18,7 @@ export function StepSummary() {
     summaryBranchLabel,
     summaryServiceLabel,
     ticketType,
-    waitTimeLabel,
     ticketNumber,
-    ticketDate,
     qrCodeUrl,
     goNext,
     goBack,
@@ -64,12 +62,10 @@ export function StepSummary() {
           <Row label="Branch Name" value={summaryBranchLabel} />
           <Row label="Service Name" value={summaryServiceLabel} />
           <Row label="Ticket Type" value={typeLabel} />
-          <Row label="Estimated Waiting Time" value={waitTimeLabel} />
           <View style={[styles.row, styles.rowBorder]}>
             <Text style={styles.rowLabel}>Ticket Number</Text>
             <Text style={styles.ticketNum}>{ticketNumber}</Text>
           </View>
-          <Row label="Date & Time" value={ticketDate} isLast />
         </View>
 
         <View style={styles.qr}>
