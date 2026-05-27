@@ -14,8 +14,9 @@ import { FieldError } from '@/components/kiosk/FieldError';
 import { GradientButton } from '@/components/kiosk/GradientButton';
 import { KioskCard } from '@/components/kiosk/KioskCard';
 import { useKiosk } from '@/context/kiosk-context';
+import { KIOSK_COPY } from '@/constants/kiosk-i18n';
 import { KioskColors } from '@/constants/kiosk-theme';
-import { getMissingApiKeyMessage, isLiveApiEnabled } from '@/services/api/config';
+import { isLiveApiEnabled } from '@/services/api/config';
 import { apiValidateKioskCode } from '@/services/api/kiosk-api';
 
 /** Alphanumeric kiosk code (e.g. ABCD12) */
@@ -26,6 +27,7 @@ export function StepWelcome() {
   const narrow = width < 400;
   const { kioskId, setKioskId, language, setLanguage, goNext, setBranchList, setOrganization } =
     useKiosk();
+  const copy = KIOSK_COPY[language];
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,21 +39,31 @@ export function StepWelcome() {
   const onContinue = async () => {
     setError(null);
     if (!isLiveApiEnabled()) {
-      setError(getMissingApiKeyMessage());
+      setError(copy.welcome.missingApiKey);
       return;
     }
     setLoading(true);
     try {
       const res = await apiValidateKioskCode(kioskId);
       if (!res.ok) {
-        setError(res.message ?? 'Invalid kiosk code');
+        setError(
+          language === 'hi'
+            ? copy.welcome.invalidKioskCode
+            : (res.message ?? copy.welcome.invalidKioskCode),
+        );
         return;
       }
       setOrganization(res.organization);
       setBranchList(res.branches);
       goNext();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Network error');
+      setError(
+        language === 'hi'
+          ? copy.welcome.networkError
+          : e instanceof Error
+            ? e.message
+            : copy.welcome.networkError,
+      );
     } finally {
       setLoading(false);
     }
@@ -62,10 +74,10 @@ export function StepWelcome() {
       <View style={styles.iconCircle}>
         <Ionicons name="business" size={36} color={KioskColors.white} />
       </View>
-      <Text style={styles.heading}>Welcome to Banking Kiosk</Text>
-      <Text style={styles.sub}>Enter your Kiosk Code</Text>
+      <Text style={styles.heading}>{copy.welcome.heading}</Text>
+      <Text style={styles.sub}>{copy.welcome.subtitle}</Text>
 
-      <Text style={styles.label}>Enter Kiosk Code</Text>
+      <Text style={styles.label}>{copy.welcome.label}</Text>
       <TextInput
         style={styles.input}
         autoCapitalize="characters"
@@ -83,7 +95,7 @@ export function StepWelcome() {
       <FieldError message={error} />
 
       <GradientButton
-        title="Continue"
+        title={copy.common.continue}
         disabled={!valid || loading}
         loading={loading}
         onPress={onContinue}

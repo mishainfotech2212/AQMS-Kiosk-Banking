@@ -5,6 +5,7 @@ import { GrayButton } from '@/components/kiosk/GrayButton';
 import { GradientButton } from '@/components/kiosk/GradientButton';
 import { KioskCard } from '@/components/kiosk/KioskCard';
 import { useKiosk } from '@/context/kiosk-context';
+import { KIOSK_COPY } from '@/constants/kiosk-i18n';
 import { KioskColors } from '@/constants/kiosk-theme';
 
 /** Static language only — no API */
@@ -12,10 +13,11 @@ export function StepLanguage() {
   const { width } = useWindowDimensions();
   const narrow = width < 480;
   const { language, setLanguage, goNext, goBack } = useKiosk();
+  const copy = KIOSK_COPY[language];
 
   return (
     <KioskCard style={narrow ? styles.cardTight : undefined}>
-      <Text style={styles.title}>Choose Language</Text>
+      <Text style={styles.title}>{copy.language.title}</Text>
 
       <View style={[styles.grid, narrow && styles.gridStack]}>
         <Pressable
@@ -27,7 +29,7 @@ export function StepLanguage() {
             color={language === 'en' ? KioskColors.mediumBlue : KioskColors.grey}
           />
           <Text style={styles.optTitle}>English</Text>
-          <Text style={styles.optSub}>English</Text>
+          <Text style={styles.optSub}>{copy.language.englishSub}</Text>
         </Pressable>
 
         <Pressable
@@ -39,20 +41,20 @@ export function StepLanguage() {
             color={language === 'hi' ? KioskColors.mediumBlue : KioskColors.grey}
           />
           <Text style={styles.optTitle}>हिंदी</Text>
-          <Text style={styles.optSub}>Hindi</Text>
+          <Text style={styles.optSub}>{copy.language.hindiSub}</Text>
         </Pressable>
       </View>
 
       <View style={[styles.footer, narrow && styles.footerStack]}>
         <GrayButton
-          title="Back"
+          title={copy.common.back}
           showBackArrow
           onPress={goBack}
           flex={narrow ? undefined : 1}
           style={narrow ? styles.btnFull : undefined}
         />
         <GradientButton
-          title="Continue"
+          title={copy.common.continue}
           onPress={goNext}
           flex={narrow ? undefined : 1.4}
           style={narrow ? styles.btnFull : undefined}

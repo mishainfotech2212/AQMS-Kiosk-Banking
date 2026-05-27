@@ -8,6 +8,7 @@ import { GrayButton } from '@/components/kiosk/GrayButton';
 import { GradientButton } from '@/components/kiosk/GradientButton';
 import { KioskCard } from '@/components/kiosk/KioskCard';
 import { useKiosk } from '@/context/kiosk-context';
+import { KIOSK_COPY } from '@/constants/kiosk-i18n';
 import { KioskColors } from '@/constants/kiosk-theme';
 
 /** Summary shows generate-token response; Print/Send — no backend API in spec (local only) */
@@ -20,17 +21,20 @@ export function StepSummary() {
     ticketType,
     ticketNumber,
     qrCodeUrl,
+    language,
     goNext,
     goBack,
   } = useKiosk();
+  const copy = KIOSK_COPY[language];
 
-  const typeLabel = ticketType === 'priority' ? 'Priority' : 'Standard';
+  const typeLabel =
+    ticketType === 'priority' ? copy.ticketType.priority : copy.ticketType.standard;
   const [busy, setBusy] = useState<'print' | 'send' | null>(null);
 
   const onPrint = async () => {
     setBusy('print');
     try {
-      Alert.alert('Print', 'Send this ticket to the kiosk printer (hook printer integration here).');
+      Alert.alert(copy.summary.printAlertTitle, copy.summary.printAlertMessage);
     } finally {
       setBusy(null);
     }
@@ -39,7 +43,7 @@ export function StepSummary() {
   const onSend = async () => {
     setBusy('send');
     try {
-      Alert.alert('Send to Mobile', 'Send ticket link / SMS (hook SMS integration here).');
+      Alert.alert(copy.summary.sendAlertTitle, copy.summary.sendAlertMessage);
     } finally {
       setBusy(null);
     }
@@ -47,7 +51,7 @@ export function StepSummary() {
 
   return (
     <KioskCard style={[styles.card, narrow && styles.cardTight]}>
-      <Text style={styles.title}>Ticket Summary</Text>
+      <Text style={styles.title}>{copy.summary.title}</Text>
 
       <View style={styles.dashed}>
         <LinearGradient
@@ -55,15 +59,15 @@ export function StepSummary() {
           start={{ x: 0, y: 0.5 }}
           end={{ x: 1, y: 0.5 }}
           style={styles.innerHeader}>
-          <Text style={styles.innerHeaderText}>Banking Kiosk</Text>
+          <Text style={styles.innerHeaderText}>{copy.header.title}</Text>
         </LinearGradient>
 
         <View style={styles.rows}>
-          <Row label="Branch Name" value={summaryBranchLabel} />
-          <Row label="Service Name" value={summaryServiceLabel} />
-          <Row label="Ticket Type" value={typeLabel} />
+          <Row label={copy.summary.branchName} value={summaryBranchLabel} />
+          <Row label={copy.summary.serviceName} value={summaryServiceLabel} />
+          <Row label={copy.summary.ticketType} value={typeLabel} />
           <View style={[styles.row, styles.rowBorder]}>
-            <Text style={styles.rowLabel}>Ticket Number</Text>
+            <Text style={styles.rowLabel}>{copy.summary.ticketNumber}</Text>
             <Text style={styles.ticketNum}>{ticketNumber}</Text>
           </View>
         </View>
@@ -72,14 +76,14 @@ export function StepSummary() {
           {qrCodeUrl ? (
             <Image source={{ uri: qrCodeUrl }} style={styles.qrImg} contentFit="contain" />
           ) : (
-            <Text style={styles.qrText}>QR Code</Text>
+            <Text style={styles.qrText}>{copy.summary.qrCode}</Text>
           )}
         </View>
       </View>
 
       <View style={[styles.actions, narrow && styles.actionsStack]}>
         <GradientButton
-          title="Print Ticket"
+          title={copy.summary.printTicket}
           leftIcon={<Ionicons name="print-outline" size={18} color={KioskColors.white} />}
           onPress={onPrint}
           loading={busy === 'print'}
@@ -88,7 +92,7 @@ export function StepSummary() {
           style={narrow ? styles.btnFull : undefined}
         />
         <GrayButton
-          title="Send to Mobile"
+          title={copy.summary.sendToMobile}
           bordered
           flex={narrow ? undefined : 1}
           style={narrow ? styles.btnFull : undefined}
@@ -97,7 +101,7 @@ export function StepSummary() {
           disabled={busy !== null}
         />
         <GrayButton
-          title="Finish"
+          title={copy.summary.finish}
           bordered
           flex={narrow ? undefined : 1}
           style={narrow ? styles.btnFull : undefined}
@@ -109,7 +113,7 @@ export function StepSummary() {
         />
       </View>
 
-      <GrayButton title="Back" showBackArrow onPress={goBack} style={styles.backOnly} />
+      <GrayButton title={copy.common.back} showBackArrow onPress={goBack} style={styles.backOnly} />
     </KioskCard>
   );
 }

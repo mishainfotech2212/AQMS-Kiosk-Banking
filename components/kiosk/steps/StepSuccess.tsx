@@ -5,12 +5,14 @@ import { Platform, StyleSheet, Text, View, useWindowDimensions } from 'react-nat
 import { GradientButton } from '@/components/kiosk/GradientButton';
 import { KioskCard } from '@/components/kiosk/KioskCard';
 import { useKiosk } from '@/context/kiosk-context';
+import { KIOSK_COPY } from '@/constants/kiosk-i18n';
 import { KioskColors } from '@/constants/kiosk-theme';
 
 export function StepSuccess() {
   const { width } = useWindowDimensions();
   const narrow = width < 400;
-  const { resetFlow } = useKiosk();
+  const { language, resetFlow } = useKiosk();
+  const copy = KIOSK_COPY[language];
 
   return (
     <KioskCard style={narrow ? styles.cardTight : undefined}>
@@ -26,11 +28,11 @@ export function StepSuccess() {
         </LinearGradient>
       </View>
 
-      <Text style={styles.headline}>Your Ticket has been Generated Successfully</Text>
-      <Text style={styles.sub}>Thank you for using our Banking Kiosk</Text>
+      <Text style={styles.headline}>{copy.success.headline}</Text>
+      <Text style={styles.sub}>{copy.success.subtitle}</Text>
 
       <GradientButton
-        title="Generate Another Ticket"
+        title={copy.success.generateAnother}
         leftIcon={<Ionicons name="refresh" size={20} color={KioskColors.white} />}
         onPress={resetFlow}
         style={styles.cta}

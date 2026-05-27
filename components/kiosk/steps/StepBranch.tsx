@@ -6,13 +6,15 @@ import { GrayButton } from '@/components/kiosk/GrayButton';
 import { GradientButton } from '@/components/kiosk/GradientButton';
 import { KioskCard } from '@/components/kiosk/KioskCard';
 import { useKiosk, type BranchId } from '@/context/kiosk-context';
+import { KIOSK_COPY } from '@/constants/kiosk-i18n';
 import { KioskColors } from '@/constants/kiosk-theme';
 
 /** Branches come from validate-kiosk-code response (step 1) — no extra API */
 export function StepBranch() {
   const { width } = useWindowDimensions();
   const narrow = width < 400;
-  const { branch, setBranch, branchList, goNext, goBack } = useKiosk();
+  const { branch, setBranch, branchList, language, goNext, goBack } = useKiosk();
+  const copy = KIOSK_COPY[language];
   const [local, setLocal] = useState<BranchId | null>(branch);
 
   useEffect(() => {
@@ -23,7 +25,7 @@ export function StepBranch() {
 
   return (
     <KioskCard style={narrow ? styles.cardTight : undefined}>
-      <Text style={styles.title}>Select Branch</Text>
+      <Text style={styles.title}>{copy.branch.title}</Text>
 
       <View style={styles.list}>
         {list.map((b) => {
@@ -51,19 +53,19 @@ export function StepBranch() {
       </View>
 
       {list.length === 0 ? (
-        <Text style={styles.empty}>No branches. Go back and check your kiosk code.</Text>
+        <Text style={styles.empty}>{copy.branch.empty}</Text>
       ) : null}
 
       <View style={[styles.footer, narrow && styles.footerStack]}>
         <GrayButton
-          title="Back"
+          title={copy.common.back}
           showBackArrow
           onPress={goBack}
           flex={narrow ? undefined : 1}
           style={narrow ? styles.btnFull : undefined}
         />
         <GradientButton
-          title="Continue"
+          title={copy.common.continue}
           disabled={!local || list.length === 0}
           onPress={goNext}
           flex={narrow ? undefined : 1.4}

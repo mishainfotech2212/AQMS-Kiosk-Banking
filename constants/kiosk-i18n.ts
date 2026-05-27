@@ -1,0 +1,146 @@
+export const KIOSK_COPY = {
+  en: {
+    common: {
+      back: 'Back',
+      continue: 'Continue',
+    },
+    header: {
+      title: 'Banking Kiosk',
+    },
+    welcome: {
+      heading: 'Welcome to Banking Kiosk',
+      subtitle: 'Enter your Kiosk Code',
+      label: 'Enter Kiosk Code',
+      invalidKioskCode: 'Invalid kiosk code',
+      networkError: 'Network error',
+      missingApiKey:
+        'Supabase anon key missing. Add EXPO_PUBLIC_SUPABASE_ANON_KEY to your .env file, then restart Expo with: npx expo start -c',
+    },
+    branch: {
+      title: 'Select Branch',
+      empty: 'No branches. Go back and check your kiosk code.',
+    },
+    language: {
+      title: 'Choose Language',
+      englishSub: 'English',
+      hindiSub: 'Hindi',
+    },
+    service: {
+      title: 'Select Service',
+      empty: 'No services for this branch.',
+      loadError: 'Failed to load services',
+    },
+    ticketType: {
+      title: 'Select Ticket Type',
+      standard: 'Standard',
+      standardDesc: 'Regular queue for standard service',
+      priority: 'Priority',
+      priorityDesc: 'Faster service with priority access',
+      priorityHelp:
+        'For pregnant women, VIP customers, people with disabilities, and senior citizens',
+    },
+    customer: {
+      title: 'Customer Details',
+      selectedBranch: 'Selected Branch',
+      selectedService: 'Selected Service',
+      nameLabel: 'Name (Optional)',
+      namePlaceholder: 'Name',
+      phoneLabel: 'Phone Number (Optional)',
+      walkInCustomer: 'Walk-in Customer',
+      createError: 'Could not create ticket',
+      notes: 'Created via kiosk',
+    },
+    summary: {
+      title: 'Ticket Summary',
+      branchName: 'Branch Name',
+      serviceName: 'Service Name',
+      ticketType: 'Ticket Type',
+      ticketNumber: 'Ticket Number',
+      qrCode: 'QR Code',
+      printTicket: 'Print Ticket',
+      sendToMobile: 'Send to Mobile',
+      finish: 'Finish',
+      printAlertTitle: 'Print',
+      printAlertMessage: 'Send this ticket to the kiosk printer (hook printer integration here).',
+      sendAlertTitle: 'Send to Mobile',
+      sendAlertMessage: 'Send ticket link / SMS (hook SMS integration here).',
+    },
+    success: {
+      headline: 'Your Ticket has been Generated Successfully',
+      subtitle: 'Thank you for using our Banking Kiosk',
+      generateAnother: 'Generate Another Ticket',
+    },
+  },
+  hi: {
+    common: {
+      back: 'वापस',
+      continue: 'आगे बढ़ें',
+    },
+    header: {
+      title: 'बैंकिंग कियोस्क',
+    },
+    welcome: {
+      heading: 'बैंकिंग कियोस्क में आपका स्वागत है',
+      subtitle: 'अपना कियोस्क कोड दर्ज करें',
+      label: 'कियोस्क कोड दर्ज करें',
+      invalidKioskCode: 'कियोस्क कोड अमान्य है',
+      networkError: 'नेटवर्क त्रुटि',
+      missingApiKey:
+        'Supabase anon key नहीं मिली। EXPO_PUBLIC_SUPABASE_ANON_KEY को अपनी .env फाइल में जोड़ें, फिर Expo को इस कमांड से रीस्टार्ट करें: npx expo start -c',
+    },
+    branch: {
+      title: 'शाखा चुनें',
+      empty: 'कोई शाखा नहीं मिली। वापस जाकर अपना कियोस्क कोड जांचें।',
+    },
+    language: {
+      title: 'भाषा चुनें',
+      englishSub: 'अंग्रेजी',
+      hindiSub: 'हिंदी',
+    },
+    service: {
+      title: 'सेवा चुनें',
+      empty: 'इस शाखा के लिए कोई सेवा उपलब्ध नहीं है।',
+      loadError: 'सेवाएं लोड नहीं हो पाईं',
+    },
+    ticketType: {
+      title: 'टिकट प्रकार चुनें',
+      standard: 'सामान्य',
+      standardDesc: 'सामान्य सेवा के लिए नियमित कतार',
+      priority: 'प्राथमिकता',
+      priorityDesc: 'प्राथमिकता के साथ तेज सेवा',
+      priorityHelp: 'गर्भवती महिलाओं, VIP ग्राहकों, दिव्यांगों और वरिष्ठ नागरिकों के लिए',
+    },
+    customer: {
+      title: 'ग्राहक विवरण',
+      selectedBranch: 'चुनी गई शाखा',
+      selectedService: 'चुनी गई सेवा',
+      nameLabel: 'नाम (वैकल्पिक)',
+      namePlaceholder: 'नाम',
+      phoneLabel: 'फोन नंबर (वैकल्पिक)',
+      walkInCustomer: 'वॉक-इन ग्राहक',
+      createError: 'टिकट नहीं बन पाया',
+      notes: 'कियोस्क से बनाया गया',
+    },
+    summary: {
+      title: 'टिकट सारांश',
+      branchName: 'शाखा का नाम',
+      serviceName: 'सेवा का नाम',
+      ticketType: 'टिकट प्रकार',
+      ticketNumber: 'टिकट नंबर',
+      qrCode: 'QR कोड',
+      printTicket: 'टिकट प्रिंट करें',
+      sendToMobile: 'मोबाइल पर भेजें',
+      finish: 'समाप्त करें',
+      printAlertTitle: 'प्रिंट',
+      printAlertMessage: 'इस टिकट को कियोस्क प्रिंटर पर भेजें (यहां प्रिंटर इंटीग्रेशन जोड़ें)।',
+      sendAlertTitle: 'मोबाइल पर भेजें',
+      sendAlertMessage: 'टिकट लिंक / SMS भेजें (यहां SMS इंटीग्रेशन जोड़ें)।',
+    },
+    success: {
+      headline: 'आपका टिकट सफलतापूर्वक बन गया है',
+      subtitle: 'हमारे बैंकिंग कियोस्क का उपयोग करने के लिए धन्यवाद',
+      generateAnother: 'दूसरा टिकट बनाएं',
+    },
+  },
+} as const;
+

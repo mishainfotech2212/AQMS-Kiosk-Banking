@@ -14,6 +14,7 @@ import { GradientButton } from '@/components/kiosk/GradientButton';
 import { FieldError } from '@/components/kiosk/FieldError';
 import { KioskCard } from '@/components/kiosk/KioskCard';
 import { useKiosk } from '@/context/kiosk-context';
+import { KIOSK_COPY } from '@/constants/kiosk-i18n';
 import { KioskColors } from '@/constants/kiosk-theme';
 import { apiGenerateToken } from '@/services/api/kiosk-api';
 
@@ -33,7 +34,9 @@ export function StepCustomer() {
     goBack,
     ticketType,
     applyTicketFromServer,
+    language,
   } = useKiosk();
+  const copy = KIOSK_COPY[language];
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,18 +50,24 @@ export function StepCustomer() {
         service_id: serviceItemId,
         counter_id: null as string | null,
         served_by: null as string | null,
-        customer_name: customerName.trim() || 'Walk-in Customer',
+        customer_name: customerName.trim() || copy.customer.walkInCustomer,
         customer_phone: customerPhone.trim() || '+0000000000',
         priority: ticketType === 'priority' ? 1 : 0,
         source: 'api',
         auto_assign: true,
-        notes: 'Created via kiosk',
+        notes: copy.customer.notes,
       };
       const result = await apiGenerateToken(payload);
       applyTicketFromServer(result);
       goNext();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not create ticket');
+      setError(
+        language === 'hi'
+          ? copy.customer.createError
+          : e instanceof Error
+            ? e.message
+            : copy.customer.createError,
+      );
     } finally {
       setLoading(false);
     }
@@ -66,7 +75,7 @@ export function StepCustomer() {
 
   return (
     <KioskCard style={narrow ? styles.cardTight : undefined}>
-      <Text style={styles.title}>Customer Details</Text>
+      <Text style={styles.title}>{copy.customer.title}</Text>
 
       <View style={styles.info}>
         <View style={styles.infoRow}>
@@ -74,7 +83,7 @@ export function StepCustomer() {
             <Ionicons name="business" size={22} color={KioskColors.mediumBlue} />
           </View>
           <View style={styles.infoTextWrap}>
-            <Text style={styles.infoLabel}>Selected Branch</Text>
+            <Text style={styles.infoLabel}>{copy.customer.selectedBranch}</Text>
             <Text style={styles.infoValue}>{branchLabel}</Text>
           </View>
         </View>
@@ -84,22 +93,22 @@ export function StepCustomer() {
             <Ionicons name="settings-outline" size={22} color={KioskColors.mediumBlue} />
           </View>
           <View style={styles.infoTextWrap}>
-            <Text style={styles.infoLabel}>Selected Service</Text>
+            <Text style={styles.infoLabel}>{copy.customer.selectedService}</Text>
             <Text style={styles.infoValue}>{serviceName ?? '—'}</Text>
           </View>
         </View>
       </View>
 
-      <Text style={styles.fieldLabel}>Name (Optional)</Text>
+      <Text style={styles.fieldLabel}>{copy.customer.nameLabel}</Text>
       <TextInput
         style={styles.input}
         value={customerName}
         onChangeText={setCustomerName}
-        placeholder="Name"
+        placeholder={copy.customer.namePlaceholder}
         placeholderTextColor={KioskColors.greyMuted}
       />
 
-      <Text style={styles.fieldLabel}>Phone Number (Optional)</Text>
+      <Text style={styles.fieldLabel}>{copy.customer.phoneLabel}</Text>
       <TextInput
         style={styles.input}
         value={customerPhone}
@@ -113,14 +122,14 @@ export function StepCustomer() {
 
       <View style={[styles.footer, narrow && styles.footerStack]}>
         <GrayButton
-          title="Back"
+          title={copy.common.back}
           showBackArrow
           onPress={goBack}
           flex={narrow ? undefined : 1}
           style={narrow ? styles.btnFull : undefined}
         />
         <GradientButton
-          title="Continue"
+          title={copy.common.continue}
           onPress={onContinue}
           disabled={loading || !ticketType || !serviceItemId}
           loading={loading}

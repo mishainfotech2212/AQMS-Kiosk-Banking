@@ -15,6 +15,7 @@ import { GradientButton } from '@/components/kiosk/GradientButton';
 import { FieldError } from '@/components/kiosk/FieldError';
 import { KioskCard } from '@/components/kiosk/KioskCard';
 import { useKiosk } from '@/context/kiosk-context';
+import { KIOSK_COPY } from '@/constants/kiosk-i18n';
 import { KioskColors } from '@/constants/kiosk-theme';
 import type { ServiceTreeNode } from '@/services/api/types';
 import { apiGetServicesByBranch } from '@/services/api/kiosk-api';
@@ -107,9 +108,11 @@ export function StepService() {
     setServiceName,
     setServiceItemId,
     setSelectedServiceWaitMinutes,
+    language,
     goNext,
     goBack,
   } = useKiosk();
+  const copy = KIOSK_COPY[language];
 
   const [expanded, setExpanded] = useState(() => new Set<string>());
   const [loading, setLoading] = useState(true);
@@ -135,7 +138,15 @@ export function StepService() {
         const tree = await apiGetServicesByBranch(branch);
         if (!cancelled) setRoots(tree);
       } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : 'Failed to load services');
+        if (!cancelled) {
+          setError(
+            language === 'hi'
+              ? copy.service.loadError
+              : e instanceof Error
+                ? e.message
+                : copy.service.loadError,
+          );
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -149,6 +160,8 @@ export function StepService() {
     setServiceName,
     setServiceItemId,
     setSelectedServiceWaitMinutes,
+    copy.service.loadError,
+    language,
   ]);
 
   const toggle = useCallback((id: string) => {
@@ -176,7 +189,7 @@ export function StepService() {
 
   return (
     <KioskCard style={narrow ? styles.cardTight : undefined}>
-      <Text style={styles.title}>Select Service</Text>
+      <Text style={styles.title}>{copy.service.title}</Text>
 
       {loading ? (
         <View style={styles.center}>
@@ -187,7 +200,7 @@ export function StepService() {
           <FieldError message={error} />
           <View style={styles.treeWrap}>
             {roots.length === 0 ? (
-              <Text style={styles.empty}>No services for this branch.</Text>
+              <Text style={styles.empty}>{copy.service.empty}</Text>
             ) : (
               <TreeRows
                 nodes={roots}
@@ -205,14 +218,14 @@ export function StepService() {
 
       <View style={[styles.footer, narrow && styles.footerStack]}>
         <GrayButton
-          title="Back"
+          title={copy.common.back}
           showBackArrow
           onPress={goBack}
           flex={narrow ? undefined : 1}
           style={narrow ? styles.btnFull : undefined}
         />
         <GradientButton
-          title="Continue"
+          title={copy.common.continue}
           disabled={!canContinue || loading}
           onPress={goNext}
           flex={narrow ? undefined : 1.4}

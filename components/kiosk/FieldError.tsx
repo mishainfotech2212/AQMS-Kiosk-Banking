@@ -1,7 +1,5 @@
 import { Platform, StyleSheet, Text } from 'react-native';
 
-import { KioskColors } from '@/constants/kiosk-theme';
-
 export function FieldError({ message }: { message: string | null }) {
   if (!message) return null;
   return <Text style={styles.text}>{message}</Text>;

@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Platform, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 
 import { useKiosk } from '@/context/kiosk-context';
+import { KIOSK_COPY } from '@/constants/kiosk-i18n';
 import { KioskColors } from '@/constants/kiosk-theme';
 import { GradientButton } from '@/components/kiosk/GradientButton';
 import { GrayButton } from '@/components/kiosk/GrayButton';
@@ -10,11 +11,12 @@ import { KioskCard } from '@/components/kiosk/KioskCard';
 export function StepTicketType() {
   const { width } = useWindowDimensions();
   const narrow = width < 480;
-  const { ticketType, setTicketType, goNext, goBack } = useKiosk();
+  const { ticketType, setTicketType, language, goNext, goBack } = useKiosk();
+  const copy = KIOSK_COPY[language];
 
   return (
     <KioskCard style={narrow ? styles.cardTight : undefined}>
-      <Text style={styles.title}>Select Ticket Type</Text>
+      <Text style={styles.title}>{copy.ticketType.title}</Text>
 
       <View style={[styles.grid, narrow && styles.gridStack]}>
         <Pressable
@@ -27,8 +29,8 @@ export function StepTicketType() {
           <View style={styles.iconRing}>
             <Ionicons name="list-outline" size={28} color={KioskColors.greyMuted} />
           </View>
-          <Text style={styles.cardTitle}>Standard</Text>
-          <Text style={styles.cardDesc}>Regular queue for standard service</Text>
+          <Text style={styles.cardTitle}>{copy.ticketType.standard}</Text>
+          <Text style={styles.cardDesc}>{copy.ticketType.standardDesc}</Text>
         </Pressable>
 
         <Pressable
@@ -41,24 +43,22 @@ export function StepTicketType() {
           <View style={styles.iconRing}>
             <Ionicons name="flash-outline" size={28} color={KioskColors.greyMuted} />
           </View>
-          <Text style={styles.cardTitle}>Priority</Text>
-          <Text style={styles.cardDesc}>Faster service with priority access</Text>
-          <Text style={styles.priorityHelp}>
-            For pregnant women, VIP customers, people with disabilities, and senior citizens
-          </Text>
+          <Text style={styles.cardTitle}>{copy.ticketType.priority}</Text>
+          <Text style={styles.cardDesc}>{copy.ticketType.priorityDesc}</Text>
+          <Text style={styles.priorityHelp}>{copy.ticketType.priorityHelp}</Text>
         </Pressable>
       </View>
 
       <View style={[styles.footer, narrow && styles.footerStack]}>
         <GrayButton
-          title="Back"
+          title={copy.common.back}
           showBackArrow
           onPress={goBack}
           flex={narrow ? undefined : 1}
           style={narrow ? styles.btnFull : undefined}
         />
         <GradientButton
-          title="Continue"
+          title={copy.common.continue}
           disabled={!ticketType}
           onPress={goNext}
           flex={narrow ? undefined : 1.4}
