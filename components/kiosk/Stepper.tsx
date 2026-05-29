@@ -3,13 +3,12 @@ import { ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-n
 
 import { KioskColors } from '@/constants/kiosk-theme';
 
-const TOTAL = 7;
-
 type Props = {
   current: number;
+  total?: number;
 };
 
-export function Stepper({ current }: Props) {
+export function Stepper({ current, total = 7 }: Props) {
   const { width } = useWindowDimensions();
   const compact = width < 560;
   const circleSize = compact ? 28 : 34;
@@ -22,7 +21,7 @@ export function Stepper({ current }: Props) {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollInner}
         bounces={false}>
-        {Array.from({ length: TOTAL }, (_, i) => {
+        {Array.from({ length: total }, (_, i) => {
           const n = i + 1;
           const isDone = current > n;
           const isActive = current === n;

@@ -11,7 +11,7 @@ import { KioskCard } from '@/components/kiosk/KioskCard';
 export function StepTicketType() {
   const { width } = useWindowDimensions();
   const narrow = width < 480;
-  const { ticketType, setTicketType, language, goNext, goBack } = useKiosk();
+  const { ticketType, setTicketType, setPriorityType, language, goNext, goBack } = useKiosk();
   const copy = KIOSK_COPY[language];
 
   return (
@@ -20,7 +20,10 @@ export function StepTicketType() {
 
       <View style={[styles.grid, narrow && styles.gridStack]}>
         <Pressable
-          onPress={() => setTicketType('standard')}
+          onPress={() => {
+            setTicketType('standard');
+            setPriorityType(null);
+          }}
           style={({ pressed }) => [
             styles.card,
             ticketType === 'standard' && styles.cardSel,
@@ -34,7 +37,10 @@ export function StepTicketType() {
         </Pressable>
 
         <Pressable
-          onPress={() => setTicketType('priority')}
+          onPress={() => {
+            setTicketType('priority');
+            setPriorityType(null);
+          }}
           style={({ pressed }) => [
             styles.card,
             ticketType === 'priority' && styles.cardSel,
@@ -45,7 +51,6 @@ export function StepTicketType() {
           </View>
           <Text style={styles.cardTitle}>{copy.ticketType.priority}</Text>
           <Text style={styles.cardDesc}>{copy.ticketType.priorityDesc}</Text>
-          <Text style={styles.priorityHelp}>{copy.ticketType.priorityHelp}</Text>
         </Pressable>
       </View>
 
@@ -124,14 +129,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: KioskColors.greyMuted,
     lineHeight: 18,
-  },
-  priorityHelp: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: KioskColors.greyMuted,
-    textAlign: 'center',
-    lineHeight: 17,
-    marginTop: 4,
   },
   footer: {
     flexDirection: 'row',

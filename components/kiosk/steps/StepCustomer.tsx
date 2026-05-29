@@ -33,18 +33,25 @@ export function StepCustomer() {
     goNext,
     goBack,
     ticketType,
+    priorityType,
     applyTicketFromServer,
     language,
   } = useKiosk();
   const copy = KIOSK_COPY[language];
+  const priorityTypeLabel = priorityType ? copy.priorityType[priorityType].title : null;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const onContinue = async () => {
     if (!branch || !serviceItemId || !ticketType) return;
+    if (ticketType === 'priority' && !priorityType) return;
     setError(null);
     setLoading(true);
     try {
+      const notes =
+        ticketType === 'priority' && priorityTypeLabel
+          ? `${copy.customer.notes} - ${copy.priorityType.label}: ${priorityTypeLabel}`
+          : copy.customer.notes;
       const payload = {
         branch_id: branch,
         service_id: serviceItemId,
@@ -55,7 +62,7 @@ export function StepCustomer() {
         priority: ticketType === 'priority' ? 1 : 0,
         source: 'api',
         auto_assign: true,
-        notes: copy.customer.notes,
+        notes,
       };
       const result = await apiGenerateToken(payload);
       applyTicketFromServer(result);
@@ -97,6 +104,18 @@ export function StepCustomer() {
             <Text style={styles.infoValue}>{serviceName ?? '—'}</Text>
           </View>
         </View>
+
+        {ticketType === 'priority' && priorityTypeLabel ? (
+          <View style={styles.infoRow}>
+            <View style={styles.infoIcon}>
+              <Ionicons name="flash-outline" size={22} color={KioskColors.mediumBlue} />
+            </View>
+            <View style={styles.infoTextWrap}>
+              <Text style={styles.infoLabel}>{copy.priorityType.label}</Text>
+              <Text style={styles.infoValue}>{priorityTypeLabel}</Text>
+            </View>
+          </View>
+        ) : null}
       </View>
 
       <Text style={styles.fieldLabel}>{copy.customer.nameLabel}</Text>
@@ -131,7 +150,7 @@ export function StepCustomer() {
         <GradientButton
           title={copy.common.continue}
           onPress={onContinue}
-          disabled={loading || !ticketType || !serviceItemId}
+          disabled={loading || !ticketType || !serviceItemId || (ticketType === 'priority' && !priorityType)}
           loading={loading}
           flex={narrow ? undefined : 1.4}
           style={narrow ? styles.btnFull : undefined}

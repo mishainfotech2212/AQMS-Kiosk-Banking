@@ -36,8 +36,27 @@ export const KIOSK_COPY = {
       standardDesc: 'Regular queue for standard service',
       priority: 'Priority',
       priorityDesc: 'Faster service with priority access',
-      priorityHelp:
-        'For pregnant women, VIP customers, people with disabilities, and senior citizens',
+    },
+    priorityType: {
+      title: 'Select Priority Type',
+      subtitle: 'Choose the customer category eligible for priority service',
+      label: 'Priority Type',
+      pregnant: {
+        title: 'Pregnant Women',
+        desc: 'Priority assistance for pregnant customers',
+      },
+      vip: {
+        title: 'VIP Customer',
+        desc: 'Priority access for VIP customers',
+      },
+      disabled: {
+        title: 'Person with Disability',
+        desc: 'Accessible support for customers with disabilities',
+      },
+      senior: {
+        title: 'Senior Citizen',
+        desc: 'Priority service for senior citizens',
+      },
     },
     customer: {
       title: 'Customer Details',
@@ -108,7 +127,27 @@ export const KIOSK_COPY = {
       standardDesc: 'सामान्य सेवा के लिए नियमित कतार',
       priority: 'प्राथमिकता',
       priorityDesc: 'प्राथमिकता के साथ तेज सेवा',
-      priorityHelp: 'गर्भवती महिलाओं, VIP ग्राहकों, दिव्यांगों और वरिष्ठ नागरिकों के लिए',
+    },
+    priorityType: {
+      title: 'प्राथमिकता प्रकार चुनें',
+      subtitle: 'प्राथमिकता सेवा के लिए योग्य ग्राहक श्रेणी चुनें',
+      label: 'प्राथमिकता प्रकार',
+      pregnant: {
+        title: 'गर्भवती महिला',
+        desc: 'गर्भवती ग्राहकों के लिए प्राथमिक सहायता',
+      },
+      vip: {
+        title: 'VIP ग्राहक',
+        desc: 'VIP ग्राहकों के लिए प्राथमिक पहुंच',
+      },
+      disabled: {
+        title: 'दिव्यांग व्यक्ति',
+        desc: 'दिव्यांग ग्राहकों के लिए सुलभ सहायता',
+      },
+      senior: {
+        title: 'वरिष्ठ नागरिक',
+        desc: 'वरिष्ठ नागरिकों के लिए प्राथमिक सेवा',
+      },
     },
     customer: {
       title: 'ग्राहक विवरण',

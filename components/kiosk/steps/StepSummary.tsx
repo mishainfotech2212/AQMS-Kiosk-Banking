@@ -19,6 +19,7 @@ export function StepSummary() {
     summaryBranchLabel,
     summaryServiceLabel,
     ticketType,
+    priorityType,
     ticketNumber,
     qrCodeUrl,
     language,
@@ -29,6 +30,7 @@ export function StepSummary() {
 
   const typeLabel =
     ticketType === 'priority' ? copy.ticketType.priority : copy.ticketType.standard;
+  const priorityTypeLabel = priorityType ? copy.priorityType[priorityType].title : null;
   const [busy, setBusy] = useState<'print' | 'send' | null>(null);
 
   const onPrint = async () => {
@@ -66,6 +68,9 @@ export function StepSummary() {
           <Row label={copy.summary.branchName} value={summaryBranchLabel} />
           <Row label={copy.summary.serviceName} value={summaryServiceLabel} />
           <Row label={copy.summary.ticketType} value={typeLabel} />
+          {ticketType === 'priority' && priorityTypeLabel ? (
+            <Row label={copy.priorityType.label} value={priorityTypeLabel} />
+          ) : null}
           <View style={[styles.row, styles.rowBorder]}>
             <Text style={styles.rowLabel}>{copy.summary.ticketNumber}</Text>
             <Text style={styles.ticketNum}>{ticketNumber}</Text>

@@ -7,6 +7,7 @@ import { Stepper } from '@/components/kiosk/Stepper';
 import { StepBranch } from '@/components/kiosk/steps/StepBranch';
 import { StepCustomer } from '@/components/kiosk/steps/StepCustomer';
 import { StepLanguage } from '@/components/kiosk/steps/StepLanguage';
+import { StepPriorityType } from '@/components/kiosk/steps/StepPriorityType';
 import { StepService } from '@/components/kiosk/steps/StepService';
 import { StepSuccess } from '@/components/kiosk/steps/StepSuccess';
 import { StepSummary } from '@/components/kiosk/steps/StepSummary';
@@ -16,14 +17,16 @@ import { KioskColors } from '@/constants/kiosk-theme';
 import { KioskProvider, useKiosk } from '@/context/kiosk-context';
 
 function KioskScreens() {
-  const { step } = useKiosk();
-  const showStepper = step >= 1 && step <= 7;
+  const { step, ticketType } = useKiosk();
+  const isPriorityFlow = ticketType === 'priority';
+  const totalSteps = isPriorityFlow ? 8 : 7;
+  const showStepper = step >= 1 && step <= totalSteps;
 
   return (
     <View style={styles.root}>
       <StatusBar style="light" />
       <KioskHeader />
-      {showStepper ? <Stepper current={step} /> : null}
+      {showStepper ? <Stepper current={step} total={totalSteps} /> : null}
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -37,9 +40,10 @@ function KioskScreens() {
           {step === 3 && <StepLanguage />}
           {step === 4 && <StepService />}
           {step === 5 && <StepTicketType />}
-          {step === 6 && <StepCustomer />}
-          {step === 7 && <StepSummary />}
-          {step === 8 && <StepSuccess />}
+          {step === 6 && (isPriorityFlow ? <StepPriorityType /> : <StepCustomer />)}
+          {step === 7 && (isPriorityFlow ? <StepCustomer /> : <StepSummary />)}
+          {step === 8 && (isPriorityFlow ? <StepSummary /> : <StepSuccess />)}
+          {step === 9 && <StepSuccess />}
         </ScrollView>
       </KeyboardAvoidingView>
     </View>

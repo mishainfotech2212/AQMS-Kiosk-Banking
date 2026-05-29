@@ -5,6 +5,7 @@ import type { ApiBranch, CreateTicketResult, KioskOrganization, ServiceTreeNode 
 
 export type BranchId = string;
 export type LangId = 'en' | 'hi';
+export type PriorityTypeId = 'pregnant' | 'vip' | 'disabled' | 'senior' | null;
 
 function randomTicket(): string {
   return `TKT${String(Math.floor(100000 + Math.random() * 900000))}`;
@@ -52,6 +53,8 @@ interface KioskContextValue {
   setSelectedServiceWaitMinutes: (n: number | null) => void;
   ticketType: TicketType;
   setTicketType: (t: TicketType) => void;
+  priorityType: PriorityTypeId;
+  setPriorityType: (t: PriorityTypeId) => void;
   customerName: string;
   setCustomerName: (v: string) => void;
   customerPhone: string;
@@ -83,6 +86,7 @@ const INITIAL = {
   serviceName: null as string | null,
   serviceItemId: null as string | null,
   ticketType: null as TicketType,
+  priorityType: null as PriorityTypeId,
   customerName: '',
   customerPhone: '',
 };
@@ -100,6 +104,7 @@ export function KioskProvider({ children }: { children: React.ReactNode }) {
   const [serviceTreeRoots, setServiceTreeRoots] = useState<ServiceTreeNode[]>([]);
   const [selectedServiceWaitMinutes, setSelectedServiceWaitMinutes] = useState<number | null>(null);
   const [ticketType, setTicketType] = useState<TicketType>(INITIAL.ticketType);
+  const [priorityType, setPriorityType] = useState<PriorityTypeId>(INITIAL.priorityType);
   const [customerName, setCustomerName] = useState(INITIAL.customerName);
   const [customerPhone, setCustomerPhone] = useState(INITIAL.customerPhone);
   const [ticketNumber, setTicketNumber] = useState(() => randomTicket());
@@ -146,6 +151,7 @@ export function KioskProvider({ children }: { children: React.ReactNode }) {
     setServiceTreeRoots([]);
     setSelectedServiceWaitMinutes(null);
     setTicketType(INITIAL.ticketType);
+    setPriorityType(INITIAL.priorityType);
     setCustomerName(INITIAL.customerName);
     setCustomerPhone(INITIAL.customerPhone);
     setTicketRemoteId(null);
@@ -160,7 +166,7 @@ export function KioskProvider({ children }: { children: React.ReactNode }) {
 
   const setStep = useCallback((n: number) => setStepState(n), []);
 
-  const goNext = useCallback(() => setStepState((s) => Math.min(s + 1, 8)), []);
+  const goNext = useCallback(() => setStepState((s) => Math.min(s + 1, 9)), []);
   const goBack = useCallback(() => setStepState((s) => Math.max(s - 1, 1)), []);
 
   const branchLabel = useMemo(() => {
@@ -216,6 +222,8 @@ export function KioskProvider({ children }: { children: React.ReactNode }) {
       setSelectedServiceWaitMinutes,
       ticketType,
       setTicketType,
+      priorityType,
+      setPriorityType,
       customerName,
       setCustomerName,
       customerPhone,
@@ -251,6 +259,7 @@ export function KioskProvider({ children }: { children: React.ReactNode }) {
       serviceTreeRoots,
       selectedServiceWaitMinutes,
       ticketType,
+      priorityType,
       customerName,
       customerPhone,
       ticketNumber,
