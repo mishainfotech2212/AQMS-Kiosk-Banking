@@ -58,6 +58,10 @@ function mapOneServiceNode(raw: unknown): ServiceTreeNode | null {
   const id = String(r.id ?? '');
   if (!id) return null;
   const name = String(r.name ?? '');
+  const parentServiceId =
+    typeof r.parent_service_id === 'string' && r.parent_service_id.trim() !== ''
+      ? r.parent_service_id
+      : null;
   const wait =
     typeof r.estimated_wait_minutes === 'number' ? r.estimated_wait_minutes : null;
   let childrenRaw = r.children;
@@ -69,6 +73,7 @@ function mapOneServiceNode(raw: unknown): ServiceTreeNode | null {
   return {
     id,
     name,
+    parent_service_id: parentServiceId,
     estimated_wait_minutes: wait,
     children,
   };

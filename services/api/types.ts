@@ -13,6 +13,7 @@ export type KioskOrganization = {
 export type ServiceTreeNode = {
   id: string;
   name: string;
+  parent_service_id?: string | null;
   estimated_wait_minutes?: number | null;
   children: ServiceTreeNode[];
 };
@@ -20,8 +21,8 @@ export type ServiceTreeNode = {
 export type GenerateTokenPayload = {
   branch_id: string;
   service_id: string;
-  counter_id: string | null;
-  served_by: string | null;
+  counter_id: string;
+  served_by: string;
   customer_name: string;
   customer_phone: string;
   priority: number;

@@ -24,6 +24,7 @@ export function StepCustomer() {
   const {
     branch,
     branchLabel,
+    serviceCategory,
     serviceName,
     serviceItemId,
     customerName,
@@ -48,15 +49,19 @@ export function StepCustomer() {
     setError(null);
     setLoading(true);
     try {
-      const notes =
-        ticketType === 'priority' && priorityTypeLabel
-          ? `${copy.customer.notes} - ${copy.priorityType.label}: ${priorityTypeLabel}`
-          : copy.customer.notes;
+      const noteParts = [
+        copy.customer.notes,
+        serviceCategory ? `Selected service: ${serviceCategory}` : null,
+      ];
+      if (ticketType === 'priority' && priorityTypeLabel) {
+        noteParts.push(`${copy.priorityType.label}: ${priorityTypeLabel}`);
+      }
+      const notes = noteParts.filter((part): part is string => Boolean(part)).join(' - ');
       const payload = {
         branch_id: branch,
         service_id: serviceItemId,
-        counter_id: null as string | null,
-        served_by: null as string | null,
+        counter_id: '',
+        served_by: '',
         customer_name: customerName.trim() || copy.customer.walkInCustomer,
         customer_phone: customerPhone.trim() || '+0000000000',
         priority: ticketType === 'priority' ? 1 : 0,

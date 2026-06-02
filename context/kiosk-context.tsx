@@ -127,16 +127,19 @@ export function KioskProvider({ children }: { children: React.ReactNode }) {
     setTicketDisplayServiceName(null);
   }, []);
 
-  const applyTicketFromServer = useCallback((r: CreateTicketResult) => {
-    setTicketRemoteId(r.ticketId);
-    setTicketNumber(r.ticketNumber);
-    setTicketDate(r.ticketDate);
-    setQrCodeUrl(r.qrCodeUrl ?? null);
-    if (r.branchName) setTicketDisplayBranchName(r.branchName);
-    if (r.serviceName) setTicketDisplayServiceName(r.serviceName);
-    if (r.waitTimeLabel) setWaitOverride(r.waitTimeLabel);
-    if (r.estimatedServiceTime) setEstOverride(r.estimatedServiceTime);
-  }, []);
+  const applyTicketFromServer = useCallback(
+    (r: CreateTicketResult) => {
+      setTicketRemoteId(r.ticketId);
+      setTicketNumber(r.ticketNumber);
+      setTicketDate(r.ticketDate);
+      setQrCodeUrl(r.qrCodeUrl ?? null);
+      if (r.branchName) setTicketDisplayBranchName(r.branchName);
+      if (r.serviceName && !serviceName) setTicketDisplayServiceName(r.serviceName);
+      if (r.waitTimeLabel) setWaitOverride(r.waitTimeLabel);
+      if (r.estimatedServiceTime) setEstOverride(r.estimatedServiceTime);
+    },
+    [serviceName],
+  );
 
   const resetFlow = useCallback(() => {
     setStepState(1);
