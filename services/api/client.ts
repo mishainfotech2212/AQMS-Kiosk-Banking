@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 import { getApiBaseUrl, getSupabaseAnonKey } from '@/services/api/config';
 
 export class ApiError extends Error {
@@ -32,7 +34,11 @@ function buildDefaultHeaders(): Headers {
   const key = getSupabaseAnonKey();
   if (key) {
     headers.set('Authorization', `Bearer ${key}`);
-    headers.set('apikey', key);
+    // Browser CORS: backend must allow `apikey` in Access-Control-Allow-Headers.
+    // Postman/Swagger skip CORS; web only sends Authorization (Bearer token is enough).
+    if (Platform.OS !== 'web') {
+      headers.set('apikey', key);
+    }
   }
   return headers;
 }

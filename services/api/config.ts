@@ -5,7 +5,7 @@ import Constants from 'expo-constants';
  * Set in `.env` as EXPO_PUBLIC_API_BASE_URL or in app.config.js `extra.apiBaseUrl`.
  * Auth: EXPO_PUBLIC_SUPABASE_ANON_KEY (in `.env`) or `extra.supabaseAnonKey` from app.config.js.
  */
-const DEFAULT_BASE = 'https://zgkwpjytxipmxxqgtpbd.supabase.co/functions/v1';
+const DEFAULT_BASE = 'https://api.caribbargains.com/queueflow-api/functions/v1';
 
 type Extra = {
   supabaseAnonKey?: string;
@@ -22,7 +22,7 @@ export const API_PATHS = {
   generateToken: '/generate-token',
 } as const;
 
-export function getApiBaseUrl(): string {
+function getRemoteApiBaseUrl(): string {
   const fromExtra = getExtra().apiBaseUrl;
   const raw =
     fromExtra != null && String(fromExtra).trim() !== ''
@@ -31,6 +31,10 @@ export function getApiBaseUrl(): string {
   const base =
     raw != null && String(raw).trim() !== '' ? String(raw).trim() : DEFAULT_BASE;
   return base.replace(/\/+$/, '');
+}
+
+export function getApiBaseUrl(): string {
+  return getRemoteApiBaseUrl();
 }
 
 /** Supabase anon key — sent as Authorization + apikey on every request */

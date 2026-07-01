@@ -8,6 +8,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
+    "web:proxy": "node scripts/web-dev-proxy.mjs",
     "lint": "expo lint"
   },
   "dependencies": {
@@ -43,6 +44,7 @@
     "dotenv": "^17.4.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
+    "http-proxy": "^1.18.1",
     "typescript": "~5.9.2"
   },
   "private": true
