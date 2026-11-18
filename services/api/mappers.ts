@@ -1,5 +1,6 @@
 import type {
   ApiBranch,
+  ApiPriorityType,
   CreateTicketResult,
   KioskOrganization,
   ServiceTreeNode,
@@ -84,6 +85,33 @@ export function mapServicesTree(data: unknown): ServiceTreeNode[] {
   const arr = data.services;
   if (!Array.isArray(arr)) return [];
   return arr.map(mapOneServiceNode).filter((x): x is ServiceTreeNode => x != null);
+}
+
+function mapOnePriorityType(raw: unknown): ApiPriorityType | null {
+  if (!isObj(raw)) return null;
+  const r = raw as Record<string, unknown>;
+  const id = String(r.id ?? '');
+  if (!id) return null;
+  const priorityLevel =
+    typeof r.priority_level === 'number' && Number.isFinite(r.priority_level)
+      ? r.priority_level
+      : Number(r.priority_level);
+  return {
+    id,
+    name: String(r.name ?? ''),
+    code: String(r.code ?? ''),
+    description: String(r.description ?? ''),
+    icon: typeof r.icon === 'string' && r.icon.trim() !== '' ? r.icon.trim() : null,
+    color: typeof r.color === 'string' && r.color.trim() !== '' ? r.color.trim() : null,
+    priority_level: Number.isFinite(priorityLevel) ? priorityLevel : 1,
+  };
+}
+
+export function mapPriorityTypes(data: unknown): ApiPriorityType[] {
+  if (!isObj(data)) return [];
+  const arr = data.priority_types;
+  if (!Array.isArray(arr)) return [];
+  return arr.map(mapOnePriorityType).filter((x): x is ApiPriorityType => x != null);
 }
 
 function formatTicketDate(iso: string): string {

@@ -30,7 +30,7 @@ export function StepSummary() {
 
   const typeLabel =
     ticketType === 'priority' ? copy.ticketType.priority : copy.ticketType.standard;
-  const priorityTypeLabel = priorityType ? copy.priorityType[priorityType].title : null;
+  const priorityTypeLabel = priorityType?.name ?? null;
   const [busy, setBusy] = useState<'print' | 'send' | null>(null);
 
   const onPrint = async () => {

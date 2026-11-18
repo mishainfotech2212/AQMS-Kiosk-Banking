@@ -1,62 +1,148 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { ComponentProps } from 'react';
-import { Platform, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { Image } from 'expo-image';
+import { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 
 import { GrayButton } from '@/components/kiosk/GrayButton';
 import { GradientButton } from '@/components/kiosk/GradientButton';
+import { FieldError } from '@/components/kiosk/FieldError';
 import { KioskCard } from '@/components/kiosk/KioskCard';
 import { KIOSK_COPY } from '@/constants/kiosk-i18n';
 import { KioskColors } from '@/constants/kiosk-theme';
-import { useKiosk, type PriorityTypeId } from '@/context/kiosk-context';
+import { useKiosk } from '@/context/kiosk-context';
+import { apiGetPriorityTypesByBranch } from '@/services/api/kiosk-api';
+import type { ApiPriorityType } from '@/services/api/types';
 
-type PriorityOptionId = NonNullable<PriorityTypeId>;
-type IconName = ComponentProps<typeof Ionicons>['name'];
+function isRemoteIcon(icon: string | null): boolean {
+  if (!icon) return false;
+  return /^https?:\/\//i.test(icon) || icon.startsWith('data:');
+}
 
-const PRIORITY_OPTIONS: { id: PriorityOptionId; icon: IconName }[] = [
-  { id: 'pregnant', icon: 'heart-outline' },
-  { id: 'vip', icon: 'star-outline' },
-  { id: 'disabled', icon: 'accessibility-outline' },
-  { id: 'senior', icon: 'person-outline' },
-];
+function PriorityIcon({
+  option,
+  selected,
+}: {
+  option: ApiPriorityType;
+  selected: boolean;
+}) {
+  const accent = option.color?.trim() || KioskColors.mediumBlue;
+  const color = selected ? accent : KioskColors.greyMuted;
 
+  if (isRemoteIcon(option.icon)) {
+    return (
+      <Image
+        source={{ uri: option.icon! }}
+        style={styles.remoteIcon}
+        contentFit="contain"
+      />
+    );
+  }
+
+  return <Ionicons name="flash-outline" size={28} color={color} />;
+}
+
+/** Priority step — get-priority-types-by-branch */
 export function StepPriorityType() {
   const { width } = useWindowDimensions();
   const narrow = width < 520;
-  const { priorityType, setPriorityType, language, goNext, goBack } = useKiosk();
+  const { branch, priorityType, setPriorityType, language, goNext, goBack } = useKiosk();
   const copy = KIOSK_COPY[language];
+
+  const [options, setOptions] = useState<ApiPriorityType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!branch) {
+      setOptions([]);
+      setLoading(false);
+      return;
+    }
+    (async () => {
+      setLoading(true);
+      setError(null);
+      setPriorityType(null);
+      try {
+        const list = await apiGetPriorityTypesByBranch(branch);
+        if (!cancelled) setOptions(list);
+      } catch (e) {
+        if (!cancelled) {
+          setError(
+            language === 'hi'
+              ? copy.priorityType.loadError
+              : e instanceof Error
+                ? e.message
+                : copy.priorityType.loadError,
+          );
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [branch, setPriorityType, copy.priorityType.loadError, language]);
 
   return (
     <KioskCard style={narrow ? styles.cardTight : undefined}>
       <Text style={styles.title}>{copy.priorityType.title}</Text>
       <Text style={styles.subtitle}>{copy.priorityType.subtitle}</Text>
 
-      <View style={[styles.grid, narrow && styles.gridStack]}>
-        {PRIORITY_OPTIONS.map((option) => {
-          const selected = priorityType === option.id;
-          const optionCopy = copy.priorityType[option.id];
+      {loading ? (
+        <ActivityIndicator
+          color={KioskColors.mediumBlue}
+          style={styles.loader}
+          size="large"
+        />
+      ) : (
+        <View style={[styles.grid, narrow && styles.gridStack]}>
+          {options.map((option) => {
+            const selected = priorityType?.id === option.id;
+            const accent = option.color?.trim() || KioskColors.mediumBlue;
 
-          return (
-            <Pressable
-              key={option.id}
-              onPress={() => setPriorityType(option.id)}
-              style={({ pressed }) => [
-                styles.option,
-                selected && styles.optionSelected,
-                { opacity: pressed ? 0.94 : 1 },
-              ]}>
-              <View style={[styles.iconRing, selected && styles.iconRingSelected]}>
-                <Ionicons
-                  name={option.icon}
-                  size={28}
-                  color={selected ? KioskColors.mediumBlue : KioskColors.greyMuted}
-                />
-              </View>
-              <Text style={styles.optionTitle}>{optionCopy.title}</Text>
-              <Text style={styles.optionDesc}>{optionCopy.desc}</Text>
-            </Pressable>
-          );
-        })}
-      </View>
+            return (
+              <Pressable
+                key={option.id}
+                onPress={() => setPriorityType(option)}
+                style={({ pressed }) => [
+                  styles.option,
+                  selected && styles.optionSelected,
+                  selected && { borderColor: accent, backgroundColor: `${accent}14` },
+                  { opacity: pressed ? 0.94 : 1 },
+                ]}>
+                <View
+                  style={[
+                    styles.iconRing,
+                    selected && styles.iconRingSelected,
+                    selected && { backgroundColor: KioskColors.white },
+                  ]}>
+                  <PriorityIcon option={option} selected={selected} />
+                </View>
+                <Text style={styles.optionTitle}>{option.name}</Text>
+                {option.description ? (
+                  <Text style={styles.optionDesc}>{option.description}</Text>
+                ) : null}
+              </Pressable>
+            );
+          })}
+        </View>
+      )}
+
+      {!loading && options.length === 0 && !error ? (
+        <Text style={styles.empty}>{copy.priorityType.empty}</Text>
+      ) : null}
+
+      <FieldError message={error} />
 
       <View style={[styles.footer, narrow && styles.footerStack]}>
         <GrayButton
@@ -68,7 +154,7 @@ export function StepPriorityType() {
         />
         <GradientButton
           title={copy.common.continue}
-          disabled={!priorityType}
+          disabled={!priorityType || loading}
           onPress={goNext}
           flex={narrow ? undefined : 1.4}
           style={narrow ? styles.btnFull : undefined}
@@ -99,6 +185,15 @@ const styles = StyleSheet.create({
     color: KioskColors.greyMuted,
     marginBottom: 22,
     lineHeight: 20,
+  },
+  loader: {
+    marginVertical: 40,
+  },
+  empty: {
+    textAlign: 'center',
+    color: KioskColors.greyMuted,
+    marginBottom: 16,
+    fontSize: 14,
   },
   grid: {
     flexDirection: 'row',
@@ -137,6 +232,10 @@ const styles = StyleSheet.create({
   iconRingSelected: {
     backgroundColor: KioskColors.white,
   },
+  remoteIcon: {
+    width: 28,
+    height: 28,
+  },
   optionTitle: {
     fontSize: 16,
     fontWeight: '700',
@@ -160,4 +259,3 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
-

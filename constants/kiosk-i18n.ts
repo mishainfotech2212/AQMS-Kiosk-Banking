@@ -41,22 +41,8 @@ export const KIOSK_COPY = {
       title: 'Select Priority Type',
       subtitle: 'Choose the customer category eligible for priority service',
       label: 'Priority Type',
-      pregnant: {
-        title: 'Pregnant Women',
-        desc: 'Priority assistance for pregnant customers',
-      },
-      vip: {
-        title: 'VIP Customer',
-        desc: 'Priority access for VIP customers',
-      },
-      disabled: {
-        title: 'Person with Disability',
-        desc: 'Accessible support for customers with disabilities',
-      },
-      senior: {
-        title: 'Senior Citizen',
-        desc: 'Priority service for senior citizens',
-      },
+      empty: 'No priority types for this branch.',
+      loadError: 'Failed to load priority types',
     },
     customer: {
       title: 'Customer Details',
@@ -132,22 +118,8 @@ export const KIOSK_COPY = {
       title: 'प्राथमिकता प्रकार चुनें',
       subtitle: 'प्राथमिकता सेवा के लिए योग्य ग्राहक श्रेणी चुनें',
       label: 'प्राथमिकता प्रकार',
-      pregnant: {
-        title: 'गर्भवती महिला',
-        desc: 'गर्भवती ग्राहकों के लिए प्राथमिक सहायता',
-      },
-      vip: {
-        title: 'VIP ग्राहक',
-        desc: 'VIP ग्राहकों के लिए प्राथमिक पहुंच',
-      },
-      disabled: {
-        title: 'दिव्यांग व्यक्ति',
-        desc: 'दिव्यांग ग्राहकों के लिए सुलभ सहायता',
-      },
-      senior: {
-        title: 'वरिष्ठ नागरिक',
-        desc: 'वरिष्ठ नागरिकों के लिए प्राथमिक सेवा',
-      },
+      empty: 'इस शाखा के लिए कोई प्राथमिकता प्रकार उपलब्ध नहीं है।',
+      loadError: 'प्राथमिकता प्रकार लोड नहीं हो पाए',
     },
     customer: {
       title: 'ग्राहक विवरण',

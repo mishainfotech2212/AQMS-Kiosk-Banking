@@ -39,7 +39,7 @@ export function StepCustomer() {
     language,
   } = useKiosk();
   const copy = KIOSK_COPY[language];
-  const priorityTypeLabel = priorityType ? copy.priorityType[priorityType].title : null;
+  const priorityTypeLabel = priorityType?.name ?? null;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -64,7 +64,8 @@ export function StepCustomer() {
         served_by: '',
         customer_name: customerName.trim() || copy.customer.walkInCustomer,
         customer_phone: customerPhone.trim() || '+0000000000',
-        priority: ticketType === 'priority' ? 1 : 0,
+        priority:
+          ticketType === 'priority' ? (priorityType?.priority_level ?? 1) : 0,
         source: 'api',
         auto_assign: true,
         notes,

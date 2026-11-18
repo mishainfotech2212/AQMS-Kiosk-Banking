@@ -19,6 +19,7 @@ function getExtra(): Extra {
 export const API_PATHS = {
   validateKioskCode: '/validate-kiosk-code',
   getServicesByBranch: '/get-services-by-branch',
+  getPriorityTypesByBranch: '/get-priority-types-by-branch',
   generateToken: '/generate-token',
 } as const;
 

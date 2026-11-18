@@ -18,6 +18,17 @@ export type ServiceTreeNode = {
   children: ServiceTreeNode[];
 };
 
+/** Priority category from get-priority-types-by-branch */
+export type ApiPriorityType = {
+  id: string;
+  name: string;
+  code: string;
+  description: string;
+  icon: string | null;
+  color: string | null;
+  priority_level: number;
+};
+
 export type GenerateTokenPayload = {
   branch_id: string;
   service_id: string;

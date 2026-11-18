@@ -1,11 +1,18 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
 import { BRANCHES } from '@/constants/kiosk-theme';
-import type { ApiBranch, CreateTicketResult, KioskOrganization, ServiceTreeNode } from '@/services/api/types';
+import type {
+  ApiBranch,
+  ApiPriorityType,
+  CreateTicketResult,
+  KioskOrganization,
+  ServiceTreeNode,
+} from '@/services/api/types';
 
 export type BranchId = string;
 export type LangId = 'en' | 'hi';
-export type PriorityTypeId = 'pregnant' | 'vip' | 'disabled' | 'senior' | null;
+/** Selected priority type from get-priority-types-by-branch (null = none) */
+export type PriorityTypeSelection = ApiPriorityType | null;
 
 function randomTicket(): string {
   return `TKT${String(Math.floor(100000 + Math.random() * 900000))}`;
@@ -53,8 +60,8 @@ interface KioskContextValue {
   setSelectedServiceWaitMinutes: (n: number | null) => void;
   ticketType: TicketType;
   setTicketType: (t: TicketType) => void;
-  priorityType: PriorityTypeId;
-  setPriorityType: (t: PriorityTypeId) => void;
+  priorityType: PriorityTypeSelection;
+  setPriorityType: (t: PriorityTypeSelection) => void;
   customerName: string;
   setCustomerName: (v: string) => void;
   customerPhone: string;
@@ -86,7 +93,7 @@ const INITIAL = {
   serviceName: null as string | null,
   serviceItemId: null as string | null,
   ticketType: null as TicketType,
-  priorityType: null as PriorityTypeId,
+  priorityType: null as PriorityTypeSelection,
   customerName: '',
   customerPhone: '',
 };
@@ -104,7 +111,7 @@ export function KioskProvider({ children }: { children: React.ReactNode }) {
   const [serviceTreeRoots, setServiceTreeRoots] = useState<ServiceTreeNode[]>([]);
   const [selectedServiceWaitMinutes, setSelectedServiceWaitMinutes] = useState<number | null>(null);
   const [ticketType, setTicketType] = useState<TicketType>(INITIAL.ticketType);
-  const [priorityType, setPriorityType] = useState<PriorityTypeId>(INITIAL.priorityType);
+  const [priorityType, setPriorityType] = useState<PriorityTypeSelection>(INITIAL.priorityType);
   const [customerName, setCustomerName] = useState(INITIAL.customerName);
   const [customerPhone, setCustomerPhone] = useState(INITIAL.customerPhone);
   const [ticketNumber, setTicketNumber] = useState(() => randomTicket());

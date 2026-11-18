@@ -6,11 +6,13 @@ import {
   mapErrorMessage,
   mapGenerateTokenResult,
   mapOrganization,
+  mapPriorityTypes,
   mapServicesTree,
   isSupabaseSuccess,
 } from '@/services/api/mappers';
 import type {
   ApiBranch,
+  ApiPriorityType,
   CreateTicketResult,
   GenerateTokenPayload,
   KioskOrganization,
@@ -120,6 +122,64 @@ export async function apiGetServicesByBranch(branchId: string): Promise<ServiceT
 
   const tree = mapServicesTree(data);
   return tree.length > 0 ? tree : [];
+}
+
+/**
+ * Priority step — get-priority-types-by-branch
+ * POST { "branch_id": "..." }
+ */
+export async function apiGetPriorityTypesByBranch(branchId: string): Promise<ApiPriorityType[]> {
+  if (!isLiveApiEnabled()) {
+    return [
+      {
+        id: 'local-senior',
+        name: 'Senior Citizen',
+        code: 'SC',
+        description: 'Priority service for senior citizens',
+        icon: null,
+        color: null,
+        priority_level: 1,
+      },
+      {
+        id: 'local-vip',
+        name: 'VIP Customer',
+        code: 'VIP',
+        description: 'Priority access for VIP customers',
+        icon: null,
+        color: null,
+        priority_level: 2,
+      },
+      {
+        id: 'local-disabled',
+        name: 'Person with Disability',
+        code: 'PWD',
+        description: 'Accessible support for customers with disabilities',
+        icon: null,
+        color: null,
+        priority_level: 1,
+      },
+      {
+        id: 'local-pregnant',
+        name: 'Pregnant Women',
+        code: 'PW',
+        description: 'Priority assistance for pregnant customers',
+        icon: null,
+        color: null,
+        priority_level: 1,
+      },
+    ];
+  }
+
+  const data = await apiRequest<unknown>(API_PATHS.getPriorityTypesByBranch, {
+    method: 'POST',
+    json: { branch_id: branchId },
+  });
+
+  if (!isSupabaseSuccess(data)) {
+    return [];
+  }
+
+  return mapPriorityTypes(data);
 }
 
 /**
