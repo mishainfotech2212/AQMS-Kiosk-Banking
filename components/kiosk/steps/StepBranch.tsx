@@ -53,7 +53,7 @@ export function StepBranch() {
       </View>
 
       {list.length === 0 ? (
-        <Text style={styles.empty}>{copy.branch.empty}</Text>
+        <Text style={styles.empty}>{copy.branch.noCounters}</Text>
       ) : null}
 
       <View style={[styles.footer, narrow && styles.footerStack]}>

@@ -57,6 +57,8 @@ function randomLocalTicket(): CreateTicketResult {
 
 export type ValidateKioskCodeResult = {
   ok: boolean;
+  /** Stable reason for UI / i18n mapping */
+  reason?: 'invalid_code' | 'no_branches' | 'api_key' | 'error';
   message?: string;
   organization: KioskOrganization | null;
   branches: ApiBranch[];
@@ -71,6 +73,7 @@ export async function apiValidateKioskCode(kioskCode: string): Promise<ValidateK
   if (!isLiveApiEnabled()) {
     return {
       ok: false,
+      reason: 'api_key',
       message: 'API key not configured',
       organization: null,
       branches: [],
@@ -85,6 +88,7 @@ export async function apiValidateKioskCode(kioskCode: string): Promise<ValidateK
   if (!isSupabaseSuccess(data)) {
     return {
       ok: false,
+      reason: 'invalid_code',
       message: mapErrorMessage(data) ?? 'Invalid kiosk code',
       organization: null,
       branches: [],
@@ -94,9 +98,19 @@ export async function apiValidateKioskCode(kioskCode: string): Promise<ValidateK
   const branches = mapBranchesFromValidate(data);
   const organization = mapOrganization(data);
 
+  // Backend omits branches with zero counters — empty list means nothing can be served.
+  if (branches.length === 0) {
+    return {
+      ok: false,
+      reason: 'no_branches',
+      message: 'No branches with counters are available for this kiosk',
+      organization,
+      branches: [],
+    };
+  }
+
   return {
-    ok: branches.length > 0,
-    message: branches.length === 0 ? 'No branches for this kiosk' : undefined,
+    ok: true,
     organization,
     branches,
   };

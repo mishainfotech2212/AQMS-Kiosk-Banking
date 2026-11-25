@@ -17,6 +17,10 @@ import { useKiosk } from '@/context/kiosk-context';
 import { KIOSK_COPY } from '@/constants/kiosk-i18n';
 import { KioskColors } from '@/constants/kiosk-theme';
 import { apiGenerateToken } from '@/services/api/kiosk-api';
+import {
+  classifyKioskError,
+  resolveKioskErrorMessage,
+} from '@/services/api/kiosk-errors';
 
 export function StepCustomer() {
   const { width } = useWindowDimensions();
@@ -74,12 +78,21 @@ export function StepCustomer() {
       applyTicketFromServer(result);
       goNext();
     } catch (e) {
+      const kind = classifyKioskError(e);
+      const raw = e instanceof Error ? e.message : null;
       setError(
-        language === 'hi'
-          ? copy.customer.createError
-          : e instanceof Error
-            ? e.message
-            : copy.customer.createError,
+        resolveKioskErrorMessage(
+          kind,
+          {
+            maintenance: copy.customer.maintenance,
+            noCounters: copy.customer.noCounters,
+            noBranches: copy.customer.noCounters,
+            invalidKioskCode: copy.customer.createError,
+            networkError: copy.customer.createError,
+            createError: copy.customer.createError,
+          },
+          raw,
+        ),
       );
     } finally {
       setLoading(false);

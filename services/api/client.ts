@@ -79,13 +79,17 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
   }
 
   if (!res.ok) {
-    const msg =
-      typeof data === 'object' &&
-      data !== null &&
-      'message' in data &&
-      typeof (data as { message: unknown }).message === 'string'
-        ? (data as { message: string }).message
-        : res.statusText || `HTTP ${res.status}`;
+    let msg = res.statusText || `HTTP ${res.status}`;
+    if (typeof data === 'object' && data !== null) {
+      const body = data as Record<string, unknown>;
+      if (typeof body.message === 'string' && body.message.trim()) {
+        msg = body.message;
+      } else if (typeof body.error === 'string' && body.error.trim()) {
+        msg = body.error;
+      } else if (typeof body.msg === 'string' && body.msg.trim()) {
+        msg = body.msg;
+      }
+    }
     throw new ApiError(msg, res.status, data);
   }
 

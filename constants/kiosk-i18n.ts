@@ -3,6 +3,8 @@ export const KIOSK_COPY = {
     common: {
       back: 'Back',
       continue: 'Continue',
+      maintenance:
+        'We are currently performing maintenance. Please try again later.',
     },
     header: {
       title: 'Banking Kiosk',
@@ -13,12 +15,18 @@ export const KIOSK_COPY = {
       label: 'Enter Kiosk Code',
       invalidKioskCode: 'Invalid kiosk code',
       networkError: 'Network error',
+      noBranches:
+        'No branches with counters are available. Ask an admin to add a counter first.',
+      maintenance:
+        'We are currently performing maintenance. Please try again later.',
       missingApiKey:
         'Supabase anon key missing. Add EXPO_PUBLIC_SUPABASE_ANON_KEY to your .env file, then restart Expo with: npx expo start -c',
     },
     branch: {
       title: 'Select Branch',
       empty: 'No branches. Go back and check your kiosk code.',
+      noCounters:
+        'No counters are configured for any branch. Ask an admin to add a counter before issuing tickets.',
     },
     language: {
       title: 'Choose Language',
@@ -53,6 +61,10 @@ export const KIOSK_COPY = {
       phoneLabel: 'Phone Number (Optional)',
       walkInCustomer: 'Walk-in Customer',
       createError: 'Could not create ticket',
+      noCounters:
+        'No counters configured for this branch. Ask an admin to add a counter before issuing tickets.',
+      maintenance:
+        'We are currently performing maintenance. Please try again later.',
       notes: 'Created via kiosk',
     },
     summary: {
@@ -80,6 +92,7 @@ export const KIOSK_COPY = {
     common: {
       back: 'वापस',
       continue: 'आगे बढ़ें',
+      maintenance: 'अभी रखरखाव चल रहा है। कृपया बाद में पुनः प्रयास करें।',
     },
     header: {
       title: 'बैंकिंग कियोस्क',
@@ -90,12 +103,17 @@ export const KIOSK_COPY = {
       label: 'कियोस्क कोड दर्ज करें',
       invalidKioskCode: 'कियोस्क कोड अमान्य है',
       networkError: 'नेटवर्क त्रुटि',
+      noBranches:
+        'काउंटर वाली कोई शाखा उपलब्ध नहीं है। पहले एडमिन से काउंटर जोड़वाएं।',
+      maintenance: 'अभी रखरखाव चल रहा है। कृपया बाद में पुनः प्रयास करें।',
       missingApiKey:
         'Supabase anon key नहीं मिली। EXPO_PUBLIC_SUPABASE_ANON_KEY को अपनी .env फाइल में जोड़ें, फिर Expo को इस कमांड से रीस्टार्ट करें: npx expo start -c',
     },
     branch: {
       title: 'शाखा चुनें',
       empty: 'कोई शाखा नहीं मिली। वापस जाकर अपना कियोस्क कोड जांचें।',
+      noCounters:
+        'किसी भी शाखा पर काउंटर सेट नहीं है। टिकट जारी करने से पहले एडमिन से काउंटर जोड़वाएं।',
     },
     language: {
       title: 'भाषा चुनें',
@@ -130,6 +148,9 @@ export const KIOSK_COPY = {
       phoneLabel: 'फोन नंबर (वैकल्पिक)',
       walkInCustomer: 'वॉक-इन ग्राहक',
       createError: 'टिकट नहीं बन पाया',
+      noCounters:
+        'इस शाखा पर कोई काउंटर सेट नहीं है। टिकट जारी करने से पहले एडमिन से काउंटर जोड़वाएं।',
+      maintenance: 'अभी रखरखाव चल रहा है। कृपया बाद में पुनः प्रयास करें।',
       notes: 'कियोस्क से बनाया गया',
     },
     summary: {

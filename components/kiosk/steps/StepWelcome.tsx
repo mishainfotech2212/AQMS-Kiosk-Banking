@@ -18,6 +18,10 @@ import { KIOSK_COPY } from '@/constants/kiosk-i18n';
 import { KioskColors } from '@/constants/kiosk-theme';
 import { isLiveApiEnabled } from '@/services/api/config';
 import { apiValidateKioskCode } from '@/services/api/kiosk-api';
+import {
+  classifyKioskError,
+  resolveKioskErrorMessage,
+} from '@/services/api/kiosk-errors';
 
 /** Alphanumeric kiosk code (e.g. ABCD12) */
 const KIOSK_CODE_RE = /^[A-Za-z0-9]{4,32}$/;
@@ -36,6 +40,14 @@ export function StepWelcome() {
     [kioskId],
   );
 
+  const errorCopy = {
+    maintenance: copy.welcome.maintenance,
+    noCounters: copy.welcome.noBranches,
+    noBranches: copy.welcome.noBranches,
+    invalidKioskCode: copy.welcome.invalidKioskCode,
+    networkError: copy.welcome.networkError,
+  };
+
   const onContinue = async () => {
     setError(null);
     if (!isLiveApiEnabled()) {
@@ -46,10 +58,21 @@ export function StepWelcome() {
     try {
       const res = await apiValidateKioskCode(kioskId);
       if (!res.ok) {
+        if (res.reason === 'no_branches') {
+          setError(copy.welcome.noBranches);
+          return;
+        }
+        if (res.reason === 'api_key') {
+          setError(copy.welcome.missingApiKey);
+          return;
+        }
+        const kind = classifyKioskError(null, res.message);
         setError(
-          language === 'hi'
-            ? copy.welcome.invalidKioskCode
-            : (res.message ?? copy.welcome.invalidKioskCode),
+          resolveKioskErrorMessage(
+            kind === 'generic' ? 'invalid_code' : kind,
+            errorCopy,
+            res.message,
+          ),
         );
         return;
       }
@@ -57,12 +80,14 @@ export function StepWelcome() {
       setBranchList(res.branches);
       goNext();
     } catch (e) {
+      const kind = classifyKioskError(e);
+      const raw = e instanceof Error ? e.message : null;
       setError(
-        language === 'hi'
-          ? copy.welcome.networkError
-          : e instanceof Error
-            ? e.message
-            : copy.welcome.networkError,
+        resolveKioskErrorMessage(
+          kind === 'generic' ? 'network' : kind,
+          errorCopy,
+          raw,
+        ),
       );
     } finally {
       setLoading(false);
