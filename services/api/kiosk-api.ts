@@ -1,6 +1,6 @@
 import { BRANCHES, SERVICE_GROUPS } from '@/constants/kiosk-theme';
 import { apiRequest } from '@/services/api/client';
-import { API_PATHS, isLiveApiEnabled } from '@/services/api/config';
+import { API_PATHS, buildTicketStatusUrl, isLiveApiEnabled } from '@/services/api/config';
 import {
   mapBranchesFromValidate,
   mapErrorMessage,
@@ -40,6 +40,7 @@ function getFallbackServiceTree(): ServiceTreeNode[] {
 
 function randomLocalTicket(): CreateTicketResult {
   const num = `TKT${String(Math.floor(100000 + Math.random() * 900000))}`;
+  const statusUrl = buildTicketStatusUrl(num);
   return {
     ticketId: num,
     ticketNumber: num,
@@ -52,6 +53,8 @@ function randomLocalTicket(): CreateTicketResult {
       second: '2-digit',
       hour12: true,
     }),
+    statusUrl,
+    qrCodeUrl: statusUrl,
   };
 }
 
@@ -140,10 +143,16 @@ export async function apiGetServicesByBranch(branchId: string): Promise<ServiceT
 
 /**
  * Priority step — get-priority-types-by-branch
- * POST { "branch_id": "..." }
+ * POST { "branch_id": "...", "service_id": "..." }
+ * When service_id is set, only priorities mapped to counters that serve that service are returned.
  */
-export async function apiGetPriorityTypesByBranch(branchId: string): Promise<ApiPriorityType[]> {
+export async function apiGetPriorityTypesByBranch(
+  branchId: string,
+  serviceId?: string | null,
+): Promise<ApiPriorityType[]> {
   if (!isLiveApiEnabled()) {
+    // Offline demo: only show sample priorities when a service is selected.
+    if (!serviceId) return [];
     return [
       {
         id: 'local-senior',
@@ -184,9 +193,12 @@ export async function apiGetPriorityTypesByBranch(branchId: string): Promise<Api
     ];
   }
 
+  const json: Record<string, string> = { branch_id: branchId };
+  if (serviceId) json.service_id = serviceId;
+
   const data = await apiRequest<unknown>(API_PATHS.getPriorityTypesByBranch, {
     method: 'POST',
-    json: { branch_id: branchId },
+    json,
   });
 
   if (!isSupabaseSuccess(data)) {

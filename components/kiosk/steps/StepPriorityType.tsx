@@ -53,7 +53,7 @@ function PriorityIcon({
 export function StepPriorityType() {
   const { width } = useWindowDimensions();
   const narrow = width < 520;
-  const { branch, priorityType, setPriorityType, language, goNext, goBack } = useKiosk();
+  const { branch, serviceItemId, priorityType, setPriorityType, language, goNext, goBack } = useKiosk();
   const copy = KIOSK_COPY[language];
 
   const [options, setOptions] = useState<ApiPriorityType[]>([]);
@@ -62,7 +62,7 @@ export function StepPriorityType() {
 
   useEffect(() => {
     let cancelled = false;
-    if (!branch) {
+    if (!branch || !serviceItemId) {
       setOptions([]);
       setLoading(false);
       return;
@@ -72,7 +72,8 @@ export function StepPriorityType() {
       setError(null);
       setPriorityType(null);
       try {
-        const list = await apiGetPriorityTypesByBranch(branch);
+        // Only priorities on counters that can serve the selected service.
+        const list = await apiGetPriorityTypesByBranch(branch, serviceItemId);
         if (!cancelled) setOptions(list);
       } catch (e) {
         if (!cancelled) {
@@ -91,7 +92,7 @@ export function StepPriorityType() {
     return () => {
       cancelled = true;
     };
-  }, [branch, setPriorityType, copy.priorityType.loadError, language]);
+  }, [branch, serviceItemId, setPriorityType, copy.priorityType.loadError, language]);
 
   return (
     <KioskCard style={narrow ? styles.cardTight : undefined}>

@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Alert, Platform, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import QRCode from 'react-native-qrcode-svg';
 
 import { GrayButton } from '@/components/kiosk/GrayButton';
 import { GradientButton } from '@/components/kiosk/GradientButton';
@@ -10,6 +10,7 @@ import { KioskCard } from '@/components/kiosk/KioskCard';
 import { useKiosk } from '@/context/kiosk-context';
 import { KIOSK_COPY } from '@/constants/kiosk-i18n';
 import { KioskColors } from '@/constants/kiosk-theme';
+import { buildTicketStatusUrl } from '@/services/api/config';
 
 /** Summary shows generate-token response; Print/Send — no backend API in spec (local only) */
 export function StepSummary() {
@@ -33,6 +34,14 @@ export function StepSummary() {
   const priorityTypeLabel = priorityType?.name ?? null;
   const [busy, setBusy] = useState<'print' | 'send' | null>(null);
 
+  const qrValue = useMemo(() => {
+    if (qrCodeUrl && qrCodeUrl.trim()) return qrCodeUrl.trim();
+    if (ticketNumber) return buildTicketStatusUrl(ticketNumber);
+    return null;
+  }, [qrCodeUrl, ticketNumber]);
+
+  const qrSize = narrow ? 140 : 168;
+
   const onPrint = async () => {
     setBusy('print');
     try {
@@ -45,7 +54,11 @@ export function StepSummary() {
   const onSend = async () => {
     setBusy('send');
     try {
-      Alert.alert(copy.summary.sendAlertTitle, copy.summary.sendAlertMessage);
+      const link = qrValue ? `\n\n${qrValue}` : '';
+      Alert.alert(
+        copy.summary.sendAlertTitle,
+        `${copy.summary.sendAlertMessage}${link}`,
+      );
     } finally {
       setBusy(null);
     }
@@ -78,8 +91,20 @@ export function StepSummary() {
         </View>
 
         <View style={styles.qr}>
-          {qrCodeUrl ? (
-            <Image source={{ uri: qrCodeUrl }} style={styles.qrImg} contentFit="contain" />
+          {qrValue ? (
+            <>
+              <QRCode
+                value={qrValue}
+                size={qrSize}
+                color={KioskColors.navy}
+                backgroundColor={KioskColors.white}
+              />
+              <Text style={styles.qrHint}>
+                {language === 'hi'
+                  ? 'स्कैन करें — टिकट स्टेटस देखें'
+                  : 'Scan to track ticket status'}
+              </Text>
+            </>
           ) : (
             <Text style={styles.qrText}>{copy.summary.qrCode}</Text>
           )}
@@ -203,16 +228,19 @@ const styles = StyleSheet.create({
   },
   qr: {
     margin: 16,
-    height: 120,
+    minHeight: 180,
+    paddingVertical: 16,
     borderRadius: 10,
     backgroundColor: KioskColors.cardGrey,
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
+    gap: 10,
   },
-  qrImg: {
-    width: 120,
-    height: 120,
+  qrHint: {
+    fontSize: 12,
+    color: KioskColors.greyMuted,
+    textAlign: 'center',
+    paddingHorizontal: 12,
   },
   qrText: {
     color: KioskColors.grey,

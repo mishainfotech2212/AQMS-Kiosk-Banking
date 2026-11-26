@@ -10,7 +10,10 @@ const DEFAULT_BASE = 'https://api.caribbargains.com/queueflow-api/functions/v1';
 type Extra = {
   supabaseAnonKey?: string;
   apiBaseUrl?: string;
+  publicWebUrl?: string;
 };
+
+const DEFAULT_PUBLIC_WEB = 'https://aqms.swadhasoftwares.com';
 
 function getExtra(): Extra {
   return (Constants.expoConfig?.extra ?? {}) as Extra;
@@ -56,4 +59,22 @@ export function isLiveApiEnabled(): boolean {
 /** User-facing hint when calls are skipped */
 export function getMissingApiKeyMessage(): string {
   return 'Supabase anon key missing. Add EXPO_PUBLIC_SUPABASE_ANON_KEY to your .env file, then restart Expo with: npx expo start -c';
+}
+
+/** Public AQMS web base used for queue-status QR deep links. */
+export function getPublicWebUrl(): string {
+  const fromExtra = getExtra().publicWebUrl;
+  const fromEnv = process.env.EXPO_PUBLIC_PUBLIC_WEB_URL;
+  const raw =
+    fromExtra != null && String(fromExtra).trim() !== ''
+      ? String(fromExtra).trim()
+      : fromEnv != null && String(fromEnv).trim() !== ''
+        ? String(fromEnv).trim()
+        : DEFAULT_PUBLIC_WEB;
+  return raw.replace(/\/+$/, '');
+}
+
+export function buildTicketStatusUrl(ticketNumber: string): string {
+  const num = (ticketNumber || '').trim();
+  return `${getPublicWebUrl()}/queue-status?ticket=${encodeURIComponent(num)}`;
 }

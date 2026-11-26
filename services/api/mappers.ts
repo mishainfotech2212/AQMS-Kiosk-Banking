@@ -145,6 +145,14 @@ export function mapGenerateTokenResult(data: unknown): CreateTicketResult | null
 
   const branchName = typeof r.branch_name === 'string' ? r.branch_name : undefined;
   const serviceName = typeof r.service_name === 'string' ? r.service_name : undefined;
+  const statusUrlRaw =
+    (typeof r.status_url === 'string' && r.status_url) ||
+    (typeof r.qr_payload === 'string' && r.qr_payload) ||
+    (typeof r.qr_url === 'string' && r.qr_url) ||
+    (typeof (data as Record<string, unknown>).status_url === 'string'
+      ? String((data as Record<string, unknown>).status_url)
+      : null);
+  const statusUrl = statusUrlRaw && String(statusUrlRaw).trim() !== '' ? String(statusUrlRaw).trim() : null;
 
   return {
     ticketId: ticketId || ticketNumber,
@@ -152,5 +160,7 @@ export function mapGenerateTokenResult(data: unknown): CreateTicketResult | null
     ticketDate: createdRaw ? formatTicketDate(createdRaw) : formatTicketDate(new Date().toISOString()),
     branchName,
     serviceName,
+    statusUrl,
+    qrCodeUrl: statusUrl,
   };
 }

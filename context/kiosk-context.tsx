@@ -139,7 +139,8 @@ export function KioskProvider({ children }: { children: React.ReactNode }) {
       setTicketRemoteId(r.ticketId);
       setTicketNumber(r.ticketNumber);
       setTicketDate(r.ticketDate);
-      setQrCodeUrl(r.qrCodeUrl ?? null);
+      // Prefer status deep-link for local QR rendering (not an image URL).
+      setQrCodeUrl(r.statusUrl ?? r.qrCodeUrl ?? null);
       if (r.branchName) setTicketDisplayBranchName(r.branchName);
       if (r.serviceName && !serviceName) setTicketDisplayServiceName(r.serviceName);
       if (r.waitTimeLabel) setWaitOverride(r.waitTimeLabel);

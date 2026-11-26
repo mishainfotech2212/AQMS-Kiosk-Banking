@@ -50,6 +50,8 @@ export type CreateTicketResult = {
   serviceName?: string;
   waitTimeLabel?: string;
   estimatedServiceTime?: string;
+  /** Queue status deep link — encode this into the on-screen QR */
+  statusUrl?: string | null;
   qrCodeUrl?: string | null;
 };
 

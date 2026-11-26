@@ -1,5 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Platform, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 
 import { useKiosk } from '@/context/kiosk-context';
 import { KIOSK_COPY } from '@/constants/kiosk-i18n';
@@ -7,52 +16,116 @@ import { KioskColors } from '@/constants/kiosk-theme';
 import { GradientButton } from '@/components/kiosk/GradientButton';
 import { GrayButton } from '@/components/kiosk/GrayButton';
 import { KioskCard } from '@/components/kiosk/KioskCard';
+import { apiGetPriorityTypesByBranch } from '@/services/api/kiosk-api';
 
 export function StepTicketType() {
   const { width } = useWindowDimensions();
   const narrow = width < 480;
-  const { ticketType, setTicketType, setPriorityType, language, goNext, goBack } = useKiosk();
+  const {
+    branch,
+    serviceItemId,
+    ticketType,
+    setTicketType,
+    setPriorityType,
+    language,
+    goNext,
+    goBack,
+  } = useKiosk();
   const copy = KIOSK_COPY[language];
+
+  const [priorityAvailable, setPriorityAvailable] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!branch || !serviceItemId) {
+      setPriorityAvailable(false);
+      setLoading(false);
+      return;
+    }
+    (async () => {
+      setLoading(true);
+      try {
+        const list = await apiGetPriorityTypesByBranch(branch, serviceItemId);
+        if (cancelled) return;
+        const has = list.length > 0;
+        setPriorityAvailable(has);
+        if (!has && ticketType === 'priority') {
+          setTicketType('standard');
+          setPriorityType(null);
+        }
+      } catch {
+        if (!cancelled) {
+          setPriorityAvailable(false);
+          if (ticketType === 'priority') {
+            setTicketType('standard');
+            setPriorityType(null);
+          }
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // Intentionally omit ticketType from deps — only re-check when service/branch changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [branch, serviceItemId, setTicketType, setPriorityType]);
 
   return (
     <KioskCard style={narrow ? styles.cardTight : undefined}>
       <Text style={styles.title}>{copy.ticketType.title}</Text>
 
-      <View style={[styles.grid, narrow && styles.gridStack]}>
-        <Pressable
-          onPress={() => {
-            setTicketType('standard');
-            setPriorityType(null);
-          }}
-          style={({ pressed }) => [
-            styles.card,
-            ticketType === 'standard' && styles.cardSel,
-            { opacity: pressed ? 0.95 : 1 },
-          ]}>
-          <View style={styles.iconRing}>
-            <Ionicons name="list-outline" size={28} color={KioskColors.greyMuted} />
-          </View>
-          <Text style={styles.cardTitle}>{copy.ticketType.standard}</Text>
-          <Text style={styles.cardDesc}>{copy.ticketType.standardDesc}</Text>
-        </Pressable>
+      {loading ? (
+        <ActivityIndicator color={KioskColors.mediumBlue} style={styles.loader} size="large" />
+      ) : (
+        <View style={[styles.grid, narrow && styles.gridStack]}>
+          <Pressable
+            onPress={() => {
+              setTicketType('standard');
+              setPriorityType(null);
+            }}
+            style={({ pressed }) => [
+              styles.card,
+              ticketType === 'standard' && styles.cardSel,
+              { opacity: pressed ? 0.95 : 1 },
+            ]}>
+            <View style={styles.iconRing}>
+              <Ionicons name="list-outline" size={28} color={KioskColors.greyMuted} />
+            </View>
+            <Text style={styles.cardTitle}>{copy.ticketType.standard}</Text>
+            <Text style={styles.cardDesc}>{copy.ticketType.standardDesc}</Text>
+          </Pressable>
 
-        <Pressable
-          onPress={() => {
-            setTicketType('priority');
-            setPriorityType(null);
-          }}
-          style={({ pressed }) => [
-            styles.card,
-            ticketType === 'priority' && styles.cardSel,
-            { opacity: pressed ? 0.95 : 1 },
-          ]}>
-          <View style={styles.iconRing}>
-            <Ionicons name="flash-outline" size={28} color={KioskColors.greyMuted} />
-          </View>
-          <Text style={styles.cardTitle}>{copy.ticketType.priority}</Text>
-          <Text style={styles.cardDesc}>{copy.ticketType.priorityDesc}</Text>
-        </Pressable>
-      </View>
+          {priorityAvailable ? (
+            <Pressable
+              onPress={() => {
+                setTicketType('priority');
+                setPriorityType(null);
+              }}
+              style={({ pressed }) => [
+                styles.card,
+                ticketType === 'priority' && styles.cardSel,
+                { opacity: pressed ? 0.95 : 1 },
+              ]}>
+              <View style={styles.iconRing}>
+                <Ionicons name="flash-outline" size={28} color={KioskColors.greyMuted} />
+              </View>
+              <Text style={styles.cardTitle}>{copy.ticketType.priority}</Text>
+              <Text style={styles.cardDesc}>{copy.ticketType.priorityDesc}</Text>
+            </Pressable>
+          ) : null}
+        </View>
+      )}
+
+      {!loading && !priorityAvailable ? (
+        <Text style={styles.hint}>
+          {language === 'hi'
+            ? 'Is service ke counters pe koi priority type assign nahi hai — standard ticket hi milega.'
+            : 'No priority types are assigned to counters for this service — standard ticket only.'}
+        </Text>
+      ) : null}
 
       <View style={[styles.footer, narrow && styles.footerStack]}>
         <GrayButton
@@ -64,7 +137,7 @@ export function StepTicketType() {
         />
         <GradientButton
           title={copy.common.continue}
-          disabled={!ticketType}
+          disabled={!ticketType || loading}
           onPress={goNext}
           flex={narrow ? undefined : 1.4}
           style={narrow ? styles.btnFull : undefined}
@@ -88,6 +161,16 @@ const styles = StyleSheet.create({
       web: "system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
       default: undefined,
     }),
+  },
+  loader: {
+    marginVertical: 36,
+  },
+  hint: {
+    textAlign: 'center',
+    color: KioskColors.greyMuted,
+    fontSize: 13,
+    marginBottom: 16,
+    lineHeight: 18,
   },
   grid: {
     flexDirection: 'row',
